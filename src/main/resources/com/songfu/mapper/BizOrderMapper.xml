@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.songfu.mapper.BizOrderMapper">
+    <update id="restoreByIds">
+        update biz_order set is_deleted = 0
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="list" resultType="com.songfu.pojo.BizOrder">
+        select o.id, o.customer_id, o.process_id, order_date, product_name, spec_1, spec_2,
+               special_unit_price, quantity, amount, o.remark, is_deleted, print_count, o.create_time, o.update_time,
+               c.name customer_name, p.name process_name, cp.fake_unit_price unit_price
+        from biz_order o
+        left join biz_customer c on o.customer_id = c.id
+        left join biz_process p on o.process_id = p.id
+        left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        <where>
+            o.is_deleted = 0
+            <if test="param.id != null and param.id != 0">
+                and o.id = #{param.id}
+            </if>
+            <if test="param.customerId != null and param.customerId != 0">
+                and o.customer_id = #{param.customerId}
+            </if>
+            <if test="param.processId != null and param.processId != 0">
+                and o.process_id = #{param.processId}
+            </if>
+            <if test="param.productName != null and param.productName != ''">
+                and product_name like concat('%', #{param.productName}, '%')
+            </if>
+            <if test="param.beginDate != null and param.endDate != null">
+                and order_date between #{param.beginDate} and #{param.endDate}
+            </if>
+            <if test="param.isSpecialUnitPrice != null and param.isSpecialUnitPrice == true">
+                and special_unit_price is not null
+            </if>
+            <if test="param.beginAmount != null and param.endAmount != null">
+                and amount between #{param.beginAmount} and #{param.endAmount}
+            </if>
+            <if test="param.isPrinted != null and param.isPrinted == false">
+                and print_count = 0
+            </if>
+            <if test="param.isPrinted != null and param.isPrinted == true">
+                and print_count > 0
+            </if>
+        </where>
+        order by o.id desc
+    </select>
+    <select id="listByIds" resultType="com.songfu.pojo.BizOrder">
+        select o.id, o.customer_id, o.process_id, order_date, product_name, spec_1, spec_2,
+            special_unit_price, quantity, amount, o.remark, is_deleted, print_count, o.create_time, o.update_time,
+            c.name customer_name, p.name process_name, cp.fake_unit_price unit_price
+        from biz_order o
+            left join biz_customer c on o.customer_id = c.id
+            left join biz_process p on o.process_id = p.id
+            left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        where o.id in
+        <foreach item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        order by o.id
+    </select>
+    <select id="listForExcel" resultType="com.songfu.pojo.BizOrder">
+        select o.id, o.customer_id, o.process_id, order_date, product_name, spec_1, spec_2,
+               special_unit_price, quantity, amount, o.remark, is_deleted, print_count, o.create_time, o.update_time,
+               c.name customer_name, p.name process_name, cp.real_unit_price unit_price
+        from biz_order o
+                 left join biz_customer c on o.customer_id = c.id
+                 left join biz_process p on o.process_id = p.id
+                 left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        <where>
+            o.is_deleted = 0
+            and order_date between #{beginDate} and #{endDate}
+            <if test="customerId != null">
+                and o.customer_id = #{customerId}
+            </if>
+        </where>
+        order by o.customer_id, o.order_date
+    </select>
+    <select id="keywordSuggest" resultType="com.songfu.vo.OrderKeywordSuggestion">
+        select product_name, spec_1, spec_2 from biz_order
+        where customer_id = #{customerId}
+        and process_id = #{processId}
+        and product_name like concat('%', #{productName}, '%')
+        order by order_date desc
+        limit 10
+    </select>
+    <select id="getTotalSalesReport" resultType="java.util.Map">
+        select
+            <if test="mode == 1">
+                order_date
+            </if>
+            <if test="mode == 2">
+                DATE_FORMAT(order_date, '%Y-%m') order_date
+            </if>
+            , round(sum(
+              case
+                when special_unit_price is not null then spec_1 * spec_2 * quantity * special_unit_price * 0.0001
+                else spec_1 * spec_2 * quantity * cp.real_unit_price * 0.0001 end
+                ), 2) total_amount
+        from biz_order o
+        left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        where o.order_date >= #{startDate} and o.order_date &lt; #{endDate} and is_deleted = 0
+        group by
+            <if test="mode == 1">
+                order_date
+            </if>
+            <if test="mode == 2">
+                DATE_FORMAT(order_date, '%Y-%m')
+            </if>
+    </select>
+    <select id="getCustomersTotalSalesReport" resultType="com.songfu.model.CustomersTotalSalesReport">
+        select
+            <if test="mode == 1">
+                order_date
+            </if>
+            <if test="mode == 2">
+                DATE_FORMAT(order_date, '%Y-%m') order_date
+            </if>
+            , round(sum(
+                case
+                    when special_unit_price is not null then spec_1 * spec_2 * quantity * special_unit_price * 0.0001
+                    else spec_1 * spec_2 * quantity * cp.real_unit_price * 0.0001 end
+            ), 2) total_amount,
+            o.customer_id customer_id
+        from biz_order o
+        left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        where o.order_date >= #{startDate} and o.order_date &lt; #{endDate} and is_deleted = 0
+        group by
+            <if test="mode == 1">
+                order_date
+            </if>
+            <if test="mode == 2">
+                DATE_FORMAT(order_date, '%Y-%m')
+            </if>
+            , o.customer_id
+    </select>
+    <select id="getProcessesTotalProduction" resultType="java.util.Map">
+        select
+            p.name process_name,
+            round(sum(spec_1 * spec_2 * quantity * 0.0001), 2) total_production
+        from biz_order o
+        left join biz_process p on o.process_id = p.id
+        where order_date >= #{startDate} and order_date &lt; #{endDate} and is_deleted = 0
+        group by process_id
+    </select>
+    <select id="getCustomersTotalProductValue" resultType="java.util.Map">
+        select
+            c.name customer_name,
+            round(sum(
+                          case
+                              when special_unit_price is not null then spec_1 * spec_2 * quantity * special_unit_price * 0.0001
+                              else spec_1 * spec_2 * quantity * cp.real_unit_price * 0.0001 end
+                  ), 2) total_amount
+        from biz_order o
+        left join biz_customer c on o.customer_id = c.id
+        left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        where order_date >= #{startDate} and order_date &lt; #{endDate} and is_deleted = 0
+        group by o.customer_id
+        order by total_amount
+    </select>
+    <select id="listDeletedOrders" resultType="com.songfu.pojo.BizOrder">
+        select o.id, o.customer_id, o.process_id, order_date, product_name, spec_1, spec_2,
+               special_unit_price, quantity, amount, o.remark, is_deleted, print_count, o.create_time, o.update_time,
+               c.name customer_name, p.name process_name, cp.fake_unit_price unit_price
+        from biz_order o
+                 left join biz_customer c on o.customer_id = c.id
+                 left join biz_process p on o.process_id = p.id
+                 left join biz_customer_process_price cp on o.customer_id = cp.customer_id and o.process_id = cp.process_id
+        where
+            o.is_deleted = 1
+            and o.order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+        order by o.id desc
+    </select>
+    <select id="getTotalOutput" resultType="java.util.Map">
+        select round(sum(
+                     case
+                         when o.special_unit_price is not null then spec_1 * spec_2 * quantity * special_unit_price * 0.0001
+                         else spec_1 * spec_2 * quantity * cp.real_unit_price * 0.0001 end
+                     ), 2) as output
+        from biz_order o
+                 left join biz_customer_process_price cp on o.process_id = cp.process_id and o.customer_id = cp.customer_id
+        where
+            o.is_deleted = 0
+          and o.order_date between #{beginDate} and #{endDate}
+    </select>
+    <select id="getOrderCount" resultType="java.util.Map">
+        select count(*) as count from biz_order where is_deleted = 0 and order_date between #{beginDate} and #{endDate}
+    </select>
+
+
+</mapper>

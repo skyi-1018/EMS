@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.songfu.mapper.BizCustomerMapper">
+    <select id="list" resultType="com.songfu.pojo.BizCustomer">
+        select id, name, contact_person, phone, address, create_time, update_time from biz_customer
+        <where>
+            <if test="customerName != null and customerName != ''">
+                name like concat('%', #{customerName}, '%')
+            </if>
+        </where>
+        order by id
+    </select>
+</mapper>

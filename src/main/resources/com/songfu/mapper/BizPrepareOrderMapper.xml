@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.songfu.mapper.BizPrepareOrderMapper">
+    <select id="list" resultType="com.songfu.pojo.BizPrepareOrder">
+        select po.id, po.customer_id, po.process_id, order_date, product_name, spec_1, spec_2, special_unit_price, po.remark, po.create_time, po.update_time,
+        c.name customer_name, p.name process_name, cp.fake_unit_price unit_price
+        from biz_prepare_order po
+        left join biz_customer c on po.customer_id = c.id
+        left join biz_process p on po.process_id = p.id
+        left join biz_customer_process_price cp on po.customer_id = cp.customer_id and po.process_id = cp.process_id
+        order by po.customer_id, po.id
+    </select>
+</mapper>

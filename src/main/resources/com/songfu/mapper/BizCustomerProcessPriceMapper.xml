@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.songfu.mapper.BizCustomerProcessPriceMapper">
+
+    <insert id="add">
+        insert into biz_customer_process_price (customer_id, process_id, real_unit_price, fake_unit_price)
+        values
+            <foreach collection="unitPriceList" item="item" separator=",">
+                (#{item.customerId}, #{item.processId}, #{item.realUnitPrice}, #{item.fakeUnitPrice})
+            </foreach>
+    </insert>
+</mapper>
