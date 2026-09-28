@@ -1,5 +1,5 @@
 # 企业管理系统
-基于Spring+MySQL设计的企业管理系统后端，主要面对纸类加工企业，在linux上部署。若需要在Windows上运行，请注释打印调用代码，仅作测试使用。前端仓库链接
+基于Spring+MySQL设计的企业管理系统后端，主要面对纸类加工企业，在Linux上部署。若需要在Windows上运行，请注释打印调用代码，仅作测试使用。打印模板在`src/main/resources/excel/template`中，可以修改企业名称，暂不支持自定义模板。[前端仓库链接](https://github.com/skyi-1018/EMS-VUE)
 
 ## 技术栈
 - JDK: 17
