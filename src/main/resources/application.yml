@@ -31,8 +31,8 @@ file:
 
 
 jwt:
-  secret: abcdefghijklmnopqrstuvwxyz123456
+  secret: 12234243gdsgdsgsd
   expire-hours: 12
 
 my:
-  admin-password: 20041018Hy
+  admin-password: 12345678
