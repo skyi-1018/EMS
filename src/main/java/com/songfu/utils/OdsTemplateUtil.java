@@ -49,8 +49,6 @@ public class OdsTemplateUtil {
                                                       String customerName,
                                                       String preparer) throws Exception {
 
-        long startTotal = System.currentTimeMillis();
-
         // 1. 加载文档
         OdfSpreadsheetDocument spreadsheetDoc = OdfSpreadsheetDocument.loadDocument(templateIs);
 

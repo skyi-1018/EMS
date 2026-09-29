@@ -3,14 +3,11 @@ package com.songfu.utils;
 import com.songfu.common.UserContext;
 import com.songfu.config.FileProperties;
 import com.songfu.pojo.BizOrder;
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -85,7 +82,7 @@ public class PrintUtil {
 
         String savePath = outFile.getAbsolutePath();
 
-        /*// LibreOffice headless 转换PDF
+        // LibreOffice headless 转换PDF
         List<String> loCmd = List.of(
                 "libreoffice",
                 "--headless",
@@ -107,6 +104,6 @@ public class PrintUtil {
                 "-o", "fit-to-page=false",
                 pdfTmp
         );
-        CmdUtil.runCommand(lpCmd);*/
+        CmdUtil.runCommand(lpCmd);
     }
 }
