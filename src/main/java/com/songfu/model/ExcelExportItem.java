@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExcelExportItem {
+public class ExcelExportItem<T> {
 
     private String fileName;
-    private List<BizOrder> orderList;
+    private List<T> list;
 }

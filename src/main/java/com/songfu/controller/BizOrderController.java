@@ -97,7 +97,7 @@ public class BizOrderController {
         // 2.根据item数量判断输出格式
         if (itemList.size() == 1) {
             ExcelExportItem item = itemList.get(0);
-            downloadBytes = excelExportUtil.buildSingleExcelBytes(item.getOrderList());
+            downloadBytes = excelExportUtil.buildSingleExcelBytes(item.getList());
             downloadFileName = item.getFileName() + ".xlsx";
             contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         } else {

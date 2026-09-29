@@ -81,18 +81,18 @@ public class BizOrderServiceImpl implements BizOrderService {
             for (BizCustomer customer : customerList) {
                 List<BizOrder> orderList = bizOrderMapper.listForExcel(beginDate, endDate, customer.getId());
                 if (CollectionUtils.isEmpty(orderList)) continue;
-                itemList.add(new ExcelExportItem(month + " " + customer.getName(), orderList));
+                itemList.add(new ExcelExportItem<>(month + " " + customer.getName(), orderList));
             }
             List<BizOrder> orderList = bizOrderMapper.listForExcel(beginDate, endDate, null);
-            itemList.add(new ExcelExportItem(month.toString(), orderList));
+            itemList.add(new ExcelExportItem<>(month.toString(), orderList));
         } else if (mode == 2) {
             // Excel 下载
             List<BizOrder> orderList = bizOrderMapper.listForExcel(beginDate, endDate, null);
-            itemList.add(new ExcelExportItem(month.toString(), orderList));
+            itemList.add(new ExcelExportItem<>(month.toString(), orderList));
         } else if (mode == 3) {
             // 指定客户Excel下载
             List<BizOrder> orderList = bizOrderMapper.listForExcel(beginDate, endDate, customerId);
-            itemList.add(new ExcelExportItem(month + " " + bizCustomerMapper.selectById(customerId).getName(), orderList));
+            itemList.add(new ExcelExportItem<>(month + " " + bizCustomerMapper.selectById(customerId).getName(), orderList));
         } else {
             throw new RuntimeException("导出模式参数错误");
         }

@@ -39,7 +39,7 @@ public class ExcelExportUtil {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream((bos))) {
             for (ExcelExportItem item : itemList) {
-                XSSFWorkbook workbook = excelOperatorUtil.buildSingleWorkbook(item.getOrderList());
+                XSSFWorkbook workbook = excelOperatorUtil.buildSingleWorkbook(item.getList());
                 String safeFileName = item.getFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
                 zos.putNextEntry(new ZipEntry(safeFileName + ".xlsx"));
                 workbook.write(zos);
