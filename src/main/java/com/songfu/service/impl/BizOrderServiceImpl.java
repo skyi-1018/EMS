@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +69,10 @@ public class BizOrderServiceImpl implements BizOrderService {
     * 如果mode==2，item -> controller下载zip
     * */
     @Override
-    public List<ExcelExportItem>  excelExport(Integer mode, YearMonth month, Integer customerId) {
+    public List<ExcelExportItem<BizOrder>>  excelExport(Integer mode, YearMonth month, Integer customerId) {
         LocalDate beginDate = month.atDay(1);
         LocalDate endDate = month.atEndOfMonth();
-        List<ExcelExportItem> itemList = new ArrayList<>();
+        List<ExcelExportItem<BizOrder>> itemList = new ArrayList<>();
 
         if (mode == 1) {
             // 打包为ZIP下载

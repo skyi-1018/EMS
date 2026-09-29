@@ -85,7 +85,7 @@ public class BizOrderController {
                               HttpServletResponse response) throws IOException {
         log.info("Excel导出: mode = {}, month = {}, customerId = {}", mode, month, customerId);
         // 1.调用service拿到组装好的所有excel元数据
-        List<ExcelExportItem> itemList = bizOrderService.excelExport(mode, month, customerId);
+        List<ExcelExportItem<BizOrder>> itemList = bizOrderService.excelExport(mode, month, customerId);
         if(itemList.isEmpty()){
             throw new RuntimeException("没有可导出的数据");
         }
@@ -96,7 +96,7 @@ public class BizOrderController {
 
         // 2.根据item数量判断输出格式
         if (itemList.size() == 1) {
-            ExcelExportItem item = itemList.get(0);
+            ExcelExportItem<BizOrder> item = itemList.get(0);
             downloadBytes = excelExportUtil.buildSingleExcelBytes(item.getList());
             downloadFileName = item.getFileName() + ".xlsx";
             contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

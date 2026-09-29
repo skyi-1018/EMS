@@ -1,9 +1,9 @@
 spring:
   application:
-    name: ems-java
+    name: songfu-java
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ems_java
+    url: jdbc:mysql://localhost:3306/songfu_java
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
@@ -24,15 +24,15 @@ logging:
 
 # 打印文件保存地址
 file:
-  excel-save-path: C:/Users/jxxsh/Documents/EMSPrint/Excel/
-  pdf-save-path: C:/Users/jxxsh/Documents/EMSPrint/PDF/
-  triplicate-form-template: C:/Users/jxxsh/Documents/EMSPrint/FormTemplate/三联表单模板.ods
-  quadruplicate-form-template: C:/Users/jxxsh/Documents/EMSPrint/FormTemplate/四联表单模板.ods
+  excel-save-path: C:/Users/jxxsh/Documents/SongFuPrint/Excel/
+  pdf-save-path: C:/Users/jxxsh/Documents/SongFuPrint/PDF/
+  triplicate-form-template: C:/Users/jxxsh/Documents/SongFuPrint/FormTemplate/三联表单模板.ods
+  quadruplicate-form-template: C:/Users/jxxsh/Documents/SongFuPrint/FormTemplate/四联表单模板.ods
 
 
 jwt:
-  secret: 123456789asdfghjklpoiuytrewq
+  secret: abcdefghijklmnopqrstuvwxyz123456
   expire-hours: 12
 
 my:
-  admin-password: 12345678
+  admin-password: 20041018Hy

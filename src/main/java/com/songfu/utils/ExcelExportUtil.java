@@ -35,10 +35,10 @@ public class ExcelExportUtil {
     /*
     * 多个Excel打包为zip压缩包字节数组
     * */
-    public byte[] buildZipBytes(List<ExcelExportItem> itemList) throws IOException {
+    public byte[] buildZipBytes(List<ExcelExportItem<BizOrder>> itemList) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream((bos))) {
-            for (ExcelExportItem item : itemList) {
+            for (ExcelExportItem<BizOrder> item : itemList) {
                 XSSFWorkbook workbook = excelOperatorUtil.buildSingleWorkbook(item.getList());
                 String safeFileName = item.getFileName().replaceAll("[\\\\/:*?\"<>|]", "_");
                 zos.putNextEntry(new ZipEntry(safeFileName + ".xlsx"));
