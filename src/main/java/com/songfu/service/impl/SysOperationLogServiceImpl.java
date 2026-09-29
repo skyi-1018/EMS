@@ -2,6 +2,7 @@ package com.songfu.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.songfu.mapper.SysOperationLogMapper;
+import com.songfu.model.ExcelExportItem;
 import com.songfu.vo.PageResult;
 import com.songfu.dto.LogParam;
 import com.songfu.pojo.SysOperationLog;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -35,5 +37,11 @@ public class SysOperationLogServiceImpl implements SysOperationLogService {
 
         // 3.解析结果并返回
         return new PageResult<>(page.getTotal(), page.getRecords());
+    }
+
+    @Override
+    public ExcelExportItem<SysOperationLog> excelExport(LocalDate startDate, LocalDate endDate) {
+        List<SysOperationLog> operationLogList = sysOperationLogMapper.excelExport(startDate, endDate);
+        return new ExcelExportItem<>("操作日志", operationLogList);
     }
 }

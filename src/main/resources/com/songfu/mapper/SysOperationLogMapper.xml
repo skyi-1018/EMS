@@ -26,4 +26,10 @@
         </where>
         order by o.id desc
     </select>
+    <select id="excelExport" resultType="com.songfu.pojo.SysOperationLog">
+        select o.id, user_id, username, operation, method, params, ip, status, error_msg, cost_time, o.create_time
+        from sys_operation_log o
+        left join sys_user u on o.user_id = u.id
+        where o.create_time between #{startDate} and #{endDate}
+    </select>
 </mapper>
