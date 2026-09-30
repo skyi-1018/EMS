@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.songfu</groupId>
     <artifactId>songfu-java</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <name>songfu-java</name>
     <description>songfu-java</description>
     <url/>
