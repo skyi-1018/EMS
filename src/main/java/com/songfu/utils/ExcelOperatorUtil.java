@@ -2,8 +2,6 @@ package com.songfu.utils;
 
 import com.songfu.pojo.BizOrder;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -21,11 +19,6 @@ public class ExcelOperatorUtil {
         XSSFWorkbook workbook = new XSSFWorkbook();
         // 2.创建工作表
         XSSFSheet sheet = workbook.createSheet("订单明细");
-
-        // 3.设置数字单元格样式，保留两位小数，千分位
-        XSSFCellStyle numberCellStyle = workbook.createCellStyle();
-        DataFormat dataFormat = workbook.createDataFormat();
-        numberCellStyle.setDataFormat(dataFormat.getFormat("#, ##0.00"));
 
         // 4.构建表头
         XSSFRow headerRow = sheet.createRow(0);
@@ -59,8 +52,7 @@ public class ExcelOperatorUtil {
             }
             unitPrice.setCellValue(order.getUnitPrice().doubleValue());
             Cell totalCell = row.createCell(9);
-            totalCell.setCellFormula("F" + excelShowRow + "*G" + excelShowRow + "*H" + excelShowRow + "*I" + excelShowRow + "*0.0001");
-            totalCell.setCellStyle(numberCellStyle);
+            totalCell.setCellFormula("ROUND(F" + excelShowRow + "*G" + excelShowRow + "*H" + excelShowRow + "*I" + excelShowRow + "*0.0001, 2)");  // 修复精度问题
             row.createCell(10).setCellValue(order.getRemark());
 
             poiRowIndex++;
@@ -73,7 +65,6 @@ public class ExcelOperatorUtil {
 
             Cell sumCell = sumRow.createCell(9);
             sumCell.setCellFormula("SUM(J2:J" + poiRowIndex + ")");
-            sumCell.setCellStyle(numberCellStyle);
         }
 
         // 7.设置列宽度
