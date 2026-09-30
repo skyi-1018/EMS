@@ -2,6 +2,8 @@ package com.songfu.utils;
 
 import com.songfu.pojo.BizOrder;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,6 +22,23 @@ public class ExcelOperatorUtil {
         // 2.创建工作表
         XSSFSheet sheet = workbook.createSheet("订单明细");
 
+        // 3.样式设置
+        XSSFCellStyle numberCellStyle_0 = workbook.createCellStyle();
+        DataFormat dataFormat = workbook.createDataFormat();
+        numberCellStyle_0.setDataFormat(dataFormat.getFormat("0_);-0"));
+
+        XSSFCellStyle numberCellStyle_1 = workbook.createCellStyle();
+        numberCellStyle_1.setDataFormat(dataFormat.getFormat("0.0_);-0.0"));
+
+        XSSFCellStyle numberCellStyle_2 = workbook.createCellStyle();
+        numberCellStyle_2.setDataFormat(dataFormat.getFormat("0.00_);-0.00"));
+
+        XSSFCellStyle numberCellStyle_3 = workbook.createCellStyle();
+        numberCellStyle_3.setDataFormat(dataFormat.getFormat("0.000_);-0.000"));
+
+        XSSFCellStyle dateStyle = workbook.createCellStyle();
+        dateStyle.setDataFormat(dataFormat.getFormat("yyyy年MM月dd日"));
+
         // 4.构建表头
         XSSFRow headerRow = sheet.createRow(0);
         String[] headers = {"客户", "工艺", "产品名称", "日期", "单号", "规格一", "规格二", "数量", "单价", "金额", "备注"};
@@ -35,25 +54,42 @@ public class ExcelOperatorUtil {
 
             // 写入数据
             row.createCell(0).setCellValue(order.getCustomerName());
+
             row.createCell(1).setCellValue(order.getProcessName());
+
             row.createCell(2).setCellValue(order.getProductName());
-            row.createCell(3).setCellValue(order.getOrderDate().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
+
+            Cell orderDate = row.createCell(3);
+            orderDate.setCellValue(order.getOrderDate());
+            orderDate.setCellStyle(dateStyle);
+
             row.createCell(4).setCellValue(order.getId());
+
             Cell spec1 = row.createCell(5);  // F
             spec1.setCellValue(order.getSpec1().doubleValue());
+            spec1.setCellStyle(numberCellStyle_1);
+
             Cell spec2 = row.createCell(6);  // G
             spec2.setCellValue(order.getSpec2().doubleValue());
+            spec2.setCellStyle(numberCellStyle_1);
+
             Cell quantity = row.createCell(7);  // H
             quantity.setCellValue(order.getQuantity());
+            quantity.setCellStyle(numberCellStyle_0);
+
             Cell unitPrice = row.createCell(8);  // I
+            String remark = order.getRemark();
             if (order.getSpecialUnitPrice() != null && order.getSpecialUnitPrice().compareTo(BigDecimal.ZERO) != 0) {
                 order.setUnitPrice(order.getSpecialUnitPrice());
-                order.setRemark(order.getRemark() + "(特价)");
+                remark += "(特价)";
             }
             unitPrice.setCellValue(order.getUnitPrice().doubleValue());
+            unitPrice.setCellStyle(numberCellStyle_3);
+
             Cell totalCell = row.createCell(9);
             totalCell.setCellFormula("ROUND(F" + excelShowRow + "*G" + excelShowRow + "*H" + excelShowRow + "*I" + excelShowRow + "*0.0001, 2)");  // 修复精度问题
-            row.createCell(10).setCellValue(order.getRemark());
+            totalCell.setCellStyle(numberCellStyle_2);
+            row.createCell(10).setCellValue(remark);
 
             poiRowIndex++;
         }
@@ -65,6 +101,7 @@ public class ExcelOperatorUtil {
 
             Cell sumCell = sumRow.createCell(9);
             sumCell.setCellFormula("SUM(J2:J" + poiRowIndex + ")");
+            sumCell.setCellStyle(numberCellStyle_2);
         }
 
         // 7.设置列宽度
